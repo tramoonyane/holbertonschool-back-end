@@ -1,78 +1,43 @@
 #!/usr/bin/python3
+"""
+Exports to-do list information for a given employee ID to JSON format.
+
+This script takes an employee ID as a command-line argument and exports
+the corresponding user information and to-do list to a JSON file.
+"""
 
 import json
 import requests
 import sys
 
-def get_employee_todo_progress(employee_id):
-    """
-    Retrieves and prints the TODO list progress of an employee based on the given employee ID.
 
-    The function fetches data from the JSONPlaceholder REST API to find the employee's name and TODO list.
-    It then calculates the number of completed tasks and total tasks, and prints the information in the
-    required format.
+if __name__ == "__main__":
+    # Get the employee ID from the command-line argument
+    user_id = sys.argv[1]
 
-    :param employee_id: An integer representing the employee ID.
-    """
-    base_url = 'https://jsonplaceholder.typicode.com/'
-    user_url = f'{base_url}users/{employee_id}'
-    user_response = requests.get(user_url)
-    
-    if user_response.status_code != 200:
-        print(f"Error: Could not retrieve information for employee ID {employee_id}")
-        return
+    # Base URL for the JSONPlaceholder API
+    url = "https://jsonplaceholder.typicode.com/"
 
-    user_data = user_response.json()
-    employee_name = user_data.get('name')
-    employee_username = user_data.get('username')
-    
-    if employee_name is None:
-        print(f"Error: Employee ID {employee_id} does not exist.")
-        return
-    
-    todos_url = f'{base_url}todos?userId={employee_id}'
-    todos_response = requests.get(todos_url)
-    
-    if todos_response.status_code != 200:
-        print(f"Error: Could not retrieve TODO list for employee ID {employee_id}")
-        return
-    
-    todos_data = todos_response.json()
-    
-    total_tasks = len(todos_data)
-    done_tasks = [todo for todo in todos_data if todo.get('completed')]
-    number_of_done_tasks = len(done_tasks)
-    
-    print(f"Employee {employee_name} is done with tasks({number_of_done_tasks}/{total_tasks}):")
-    for task in done_tasks:
-        print(f"\t {task.get('title')}")
+    # Fetch user information using the provided employee ID
+    user = requests.get(url + "users/{}".format(user_id)).json()
+    username = user.get("username")
 
-    
-    tasks_json = {f"{employee_id}": []}
-    for task in todos_data:
-        task_dict = {
-            "task": task.get('title'),
-            "completed": task.get('completed'),
-            "username": employee_username
-        }
-        tasks_json[f"{employee_id}"].append(task_dict)
+    # Fetch the to-do list for the employee using the provided employee ID
+    params = {"userId": user_id}
+    todos = requests.get(url + "todos", params).json()
 
-    
-    filename = f'{employee_id}.json'
-    with open(filename, 'w') as jsonfile:
-        json.dump(tasks_json, jsonfile)
-    
-    print(f"Data exported to {filename}")
+    # Create a dictionary containing the user and to-do list information
+    data_to_export = {
+        user_id: [
+            {
+                "task": t.get("title"),
+                "completed": t.get("completed"),
+                "username": username
+            }
+            for t in todos
+        ]
+    }
 
-if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        print("Usage: ./script.py <employee_id>")
-        sys.exit(1)
-    
-    try:
-        employee_id = int(sys.argv[1])
-    except ValueError:
-        print("Error: Employee ID must be an integer")
-        sys.exit(1)
-    
-    get_employee_todo_progress(employee_id)
+    # Write the data to a JSON file with the employee ID as the filename
+    with open("{}.json".format(user_id), "w") as jsonfile:
+        json.dump(data_to_export, jsonfile, indent=4)
