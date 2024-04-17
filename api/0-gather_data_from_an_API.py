@@ -29,7 +29,8 @@ def fetch_user_data(employee_id):
     completed_count = len(completed_tasks)
 
     # Display the employee name and the to-do list progress
-    print(f"Employee {user['name']} is done with tasks({completed_count}/{total_tasks}):")
+    print(f"Employee {user['name']} is done with tasks("
+          f"{completed_count}/{total_tasks}):")
 
     # Display the title of completed tasks
     for task in completed_tasks:
