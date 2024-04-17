@@ -60,9 +60,8 @@ def main():
     completed_tasks = [task for task in todos if task.get("completed")]
 
     # Print the employee's name and the number of completed tasks
-    print(
-        f"Employee {employee_name} is done with tasks({len(completed_tasks)}/{len(todos)}):"
-    )
+    print(f"Employee {employee_name} is done with tasks"
+          f"({len(completed_tasks)}/{len(todos)}):")
 
     # Print the completed tasks one by one with indentation
     for task in completed_tasks:
