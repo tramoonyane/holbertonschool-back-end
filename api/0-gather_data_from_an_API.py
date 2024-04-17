@@ -44,7 +44,9 @@ def main():
     employee_name = user.get("name")
 
     # Get the to-do list for the employee using the provided employee ID
-    response_todos = requests.get(url + "todos", params={"userId": employee_id})
+    response_todos = requests.get(
+        url + "todos", params={"userId": employee_id}
+    )
 
     # Check for a valid response
     if response_todos.status_code != 200:
@@ -58,7 +60,9 @@ def main():
     completed_tasks = [task for task in todos if task.get("completed")]
 
     # Print the employee's name and the number of completed tasks
-    print(f"Employee {employee_name} is done with tasks({len(completed_tasks)}/{len(todos)}):")
+    print(
+        f"Employee {employee_name} is done with tasks({len(completed_tasks)}/{len(todos)}):"
+    )
 
     # Print the completed tasks one by one with indentation
     for task in completed_tasks:
