@@ -34,7 +34,7 @@ def fetch_user_data(employee_id):
 
     # Display the title of completed tasks
     for task in completed_tasks:
-        print(f"\t {task['title']}")
+        print(f"\t  {task['title']}")
 
 
 if __name__ == "__main__":
