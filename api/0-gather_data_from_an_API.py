@@ -16,14 +16,12 @@ def get_employee_todo_progress(employee_id):
     """
     base_url = 'https://jsonplaceholder.typicode.com/'
 
-
     user_url = f'{base_url}users/{employee_id}'
     user_response = requests.get(user_url)
     
     if user_response.status_code != 200:
         print(f"Error: Could not retrieve information for employee ID {employee_id}")
         return
-
 
     user_data = user_response.json()
     employee_name = user_data.get('name')
@@ -32,7 +30,6 @@ def get_employee_todo_progress(employee_id):
         print(f"Error: Employee ID {employee_id} does not exist.")
         return
     
-    # Get the TODO list for the given employee ID
     todos_url = f'{base_url}todos?userId={employee_id}'
     todos_response = requests.get(todos_url)
     
