@@ -33,7 +33,7 @@ def main():
 
     # Get the employee information using the provided employee ID
     response_user = requests.get(url + "users/{}".format(employee_id))
-    
+
     # Check for a valid response
     if response_user.status_code != 200:
         print("Error: Could not fetch employee data. Check the employee ID.")
