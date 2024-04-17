@@ -1,45 +1,47 @@
 #!/usr/bin/python3
 """
-Exports to-do list information of all employees to JSON format.
-
-This script fetches the user information and to-do lists for all employees
-from the JSONPlaceholder API and exports the data to a JSON file.
+Script to fetch and display the progress of an employee's to-do list
+from the JSONPlaceholder API.
 """
 
-import json
 import requests
+import sys
 
-
-def fetch_user_data():
-    """Fetch user information and to-do lists for all employees."""
+def fetch_user_data(employee_id):
+    """Fetch and display the progress of an employee's to-do list."""
     # Base URL for the JSONPlaceholder API
     url = "https://jsonplaceholder.typicode.com/"
 
-    # Fetch the list of all users (employees)
-    users = requests.get(url + "users").json()
+    # Fetch the user information
+    user = requests.get(f"{url}users/{employee_id}").json()
+    
+    if not user:
+        print(f"Employee with ID {employee_id} not found.")
+        return
 
-    # Create a dictionary containing to-do list information of all employees
-    data_to_export = {}
-    for user in users:
-        user_id = user["id"]
-        user_url = url + f"todos?userId={user_id}"
-        todo_list = requests.get(user_url).json()
+    # Fetch the to-do list for the user
+    todo_list = requests.get(f"{url}todos?userId={employee_id}").json()
 
-        data_to_export[user_id] = [
-            {
-                "task": todo.get("title"),
-                "completed": todo.get("completed"),
-                "username": user.get("username"),
-            }
-            for todo in todo_list
-        ]
+    # Calculate the number of completed tasks and the total number of tasks
+    completed_tasks = [task for task in todo_list if task['completed']]
+    total_tasks = len(todo_list)
+    completed_count = len(completed_tasks)
 
-    return data_to_export
+    # Display the employee name and the to-do list progress
+    print(f"Employee {user['name']} is done with tasks({completed_count}/{total_tasks}):")
 
+    # Display the title of completed tasks
+    for task in completed_tasks:
+        print(f"\t {task['title']}")
 
 if __name__ == "__main__":
-    data_to_export = fetch_user_data()
+    # Check if an argument was provided
+    if len(sys.argv) < 2:
+        print("Usage: ./script.py <employee_id>")
+        sys.exit(1)
+        
+    # Get the employee ID from the command-line argument
+    employee_id = int(sys.argv[1])
 
-    # Write the data to a JSON file
-    with open("todo_all_employees.json", "w") as jsonfile:
-        json.dump(data_to_export, jsonfile, indent=4)
+    # Call the function to fetch user data
+    fetch_user_data(employee_id)
