@@ -7,6 +7,7 @@ from the JSONPlaceholder API.
 import requests
 import sys
 
+
 def fetch_user_data(employee_id):
     """Fetch and display the progress of an employee's to-do list."""
     # Base URL for the JSONPlaceholder API
@@ -14,7 +15,7 @@ def fetch_user_data(employee_id):
 
     # Fetch the user information
     user = requests.get(f"{url}users/{employee_id}").json()
-    
+
     if not user:
         print(f"Employee with ID {employee_id} not found.")
         return
@@ -34,12 +35,13 @@ def fetch_user_data(employee_id):
     for task in completed_tasks:
         print(f"\t {task['title']}")
 
+
 if __name__ == "__main__":
     # Check if an argument was provided
     if len(sys.argv) < 2:
         print("Usage: ./script.py <employee_id>")
         sys.exit(1)
-        
+
     # Get the employee ID from the command-line argument
     employee_id = int(sys.argv[1])
 
