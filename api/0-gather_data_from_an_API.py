@@ -1,31 +1,43 @@
 #!/usr/bin/python3
-"""Accessing a REST API for todo lists of employees"""
+"""Script using API and modume requests"""
+
 
 import requests
 import sys
 
 
-if __name__ == '__main__':
-    employeeId = sys.argv[1]
-    baseUrl = "https://jsonplaceholder.typicode.com/users"
-    url = baseUrl + "/" + employeeId
+def fetch_todo_progress(employee_id):
+    """script API TODO list"""
 
-    response = requests.get(url)
-    employeeName = response.json().get('name')
+    employee_id = int(sys.argv[1])
+    # Endpoint URLs
+    user_url = f"https://jsonplaceholder.typicode.com/users/{employee_id}"
+    todos_url = f"https://jsonplaceholder.typicode.com/users/\
+{employee_id}/todos"
 
-    todoUrl = url + "/todos"
-    response = requests.get(todoUrl)
-    tasks = response.json()
-    done = 0
-    done_tasks = []
+    # Fetch user information
+    user_response = requests.get(user_url)
 
-    for task in tasks:
-        if task.get('completed'):
-            done_tasks.append(task)
-            done += 1
+    user_data = user_response.json()
+    EMPLOYEE_NAME = user_data['name']
 
-    print("Employee {} is done with tasks({}/{}):"
-          .format(employeeName, done, len(tasks)))
+    # Fetch TODOs for the user
+    todos_response = requests.get(todos_url)
+    todos_data = todos_response.json()
 
-    for task in done_tasks:
-        print("\t {}".format(task.get('title')))
+    # Calculate progress
+    TOTAL_NUMBER_OF_TASKS = len(todos_data)
+    NUMBER_OF_DONE_TASKS = sum(1 for TASK_TITLE in
+                               todos_data if TASK_TITLE['completed'])
+
+    # Print progress
+    print(f"Employee {EMPLOYEE_NAME} is done with tasks\
+({NUMBER_OF_DONE_TASKS}/{TOTAL_NUMBER_OF_TASKS}):")
+    for TASK_TITLE in todos_data:
+        if TASK_TITLE['completed']:
+            print(f"\t {TASK_TITLE['title']}")
+
+
+if __name__ == "__main__":
+    employee_id = int(sys.argv[1])
+    fetch_todo_progress(employee_id)
