@@ -47,7 +47,7 @@ def get_employee_todo_progress(employee_id):
     for task in done_tasks:
         print(f"\t {task.get('title')}")
 
-    # Create JSON structure for the output
+    
     tasks_json = {f"{employee_id}": []}
     for task in todos_data:
         task_dict = {
@@ -57,7 +57,7 @@ def get_employee_todo_progress(employee_id):
         }
         tasks_json[f"{employee_id}"].append(task_dict)
 
-    # Export tasks to a JSON file
+    
     filename = f'{employee_id}.json'
     with open(filename, 'w') as jsonfile:
         json.dump(tasks_json, jsonfile)
