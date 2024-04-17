@@ -1,4 +1,3 @@
-
 #!/usr/bin/python3
 """ Script that uses JSONPlaceholder API to get information about employee """
 import requests
