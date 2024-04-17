@@ -148,7 +148,7 @@ def main():
 
     # Print titles of completed tasks
     for title in completed_task_titles:
-        print("\t {}".format(task.get('title')))
+       print(f"\t {title}")
 
 
 if __name__ == "__main__":
