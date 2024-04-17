@@ -1,87 +1,45 @@
 #!/usr/bin/python3
+"""
+Exports to-do list information of all employees to JSON format.
+
+This script fetches the user information and to-do lists for all employees
+from the JSONPlaceholder API and exports the data to a JSON file.
+"""
 
 import json
 import requests
 
-def fetch_todo_data():
-    """
-    Fetches and exports tasks data for all employees from the JSONPlaceholder REST API.
 
-    The function collects tasks data for all employees and exports it to a JSON file named
-    `todo_all_employees.json` in the required format.
+def fetch_user_data():
+    """Fetch user information and to-do lists for all employees."""
+    # Base URL for the JSONPlaceholder API
+    url = "https://jsonplaceholder.typicode.com/"
 
-    The JSON format is:
-    {
-        "USER_ID": [
+    # Fetch the list of all users (employees)
+    users = requests.get(url + "users").json()
+
+    # Create a dictionary containing to-do list information of all employees
+    data_to_export = {}
+    for user in users:
+        user_id = user["id"]
+        user_url = url + f"todos?userId={user_id}"
+        todo_list = requests.get(user_url).json()
+
+        data_to_export[user_id] = [
             {
-                "username": "USERNAME",
-                "task": "TASK_TITLE",
-                "completed": TASK_COMPLETED_STATUS
-            },
-            ...
-        ],
-        "USER_ID": [
-            {
-                "username": "USERNAME",
-                "task": "TASK_TITLE",
-                "completed": TASK_COMPLETED_STATUS
-            },
-            ...
-        ],
-        ...
-    }
-    """
-    base_url = 'https://jsonplaceholder.typicode.com/'
-    
-    
-    users_url = f'{base_url}users'
-    users_response = requests.get(users_url)
-    
-    if users_response.status_code != 200:
-        print("Error: Could not retrieve users data.")
-        return
-    
-    users_data = users_response.json()
-    
-    
-    tasks_dict = {}
-    
-    
-    for user in users_data:
-        user_id = user.get('id')
-        username = user.get('username')
-        
-       
-        todos_url = f'{base_url}todos?userId={user_id}'
-        todos_response = requests.get(todos_url)
-        
-        if todos_response.status_code != 200:
-            print(f"Error: Could not retrieve TODO list for user ID {user_id}")
-            continue
-        
-        todos_data = todos_response.json()
-        
-        
-        user_tasks = []
-        
-        
-        for task in todos_data:
-            task_dict = {
-                "username": username,
-                "task": task.get('title'),
-                "completed": task.get('completed')
+                "task": todo.get("title"),
+                "completed": todo.get("completed"),
+                "username": user.get("username"),
             }
-            user_tasks.append(task_dict)
-        
-        
-        tasks_dict[user_id] = user_tasks
-    
-    
-    filename = 'todo_all_employees.json'
-    with open(filename, 'w') as jsonfile:
-        json.dump(tasks_dict, jsonfile)
-    
-    print(f"Data exported to {filename}")
+            for todo in todo_list
+        ]
 
-if __name__ == '__main__':
-    fetch_todo_data()
+    return data_to_export
+
+
+if __name__ == "__main__":
+    data_to_export = fetch_user_data()
+
+    # Write the data to a JSON file
+    with open("todo_all_employees.json", "w") as jsonfile:
+        json.dump(data_to_export, jsonfile, indent=4)
