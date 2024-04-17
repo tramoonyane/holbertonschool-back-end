@@ -115,6 +115,39 @@ def get_todo_progress(employee_id):
     return completed_todos, total_todos, completed_task_titles
 
 
+def process_output():
+    """Reads output from standard input, processes it to replace tabs with 'T'
+    and leading spaces after 'T' with 'S', then prints the processed output.
+    """
+    # Read lines from standard input
+    lines = sys.stdin.readlines()
+    
+    # Process each line
+    for line in lines:
+        line = line.strip()  # Strip leading and trailing whitespace
+        
+        # Replace tabs with 'T'
+        line = line.replace("\t", "T")
+        
+        # Replace leading spaces after 'T' with 'S'
+        processed_line = ""
+        in_tab_section = False
+        
+        for char in line:
+            if char == 'T':
+                in_tab_section = True
+            elif in_tab_section and char == ' ':
+                char = 'S'
+                in_tab_section = False
+            else:
+                in_tab_section = False
+            
+            processed_line += char
+        
+        # Print the processed line
+        print(processed_line)
+
+
 def main():
     """Main function that executes when the script is run directly."""
     # Check if an employee ID is provided
@@ -143,12 +176,14 @@ def main():
         sys.exit(1)
 
     # Print the progress summary
-    print(f"Employee {employee_name} is done with tasks"
-          f"({completed_todos}/{total_todos}):")
+    print(f"Employee {employee_name} is done with tasks({completed_todos}/{total_todos}):")
 
     # Print titles of completed tasks
     for title in completed_task_titles:
-       print(f"\t {title}")
+        print("\t {}".format(title))
+    
+    # Process the output and modify it according to the requirements
+    process_output()
 
 
 if __name__ == "__main__":
