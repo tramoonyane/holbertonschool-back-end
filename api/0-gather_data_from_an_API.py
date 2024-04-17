@@ -32,7 +32,7 @@ def main():
         return
 
     # Get the employee information using the provided employee ID
-    response_user = requests.get(url + f"users/{employee_id}")
+    response_user = requests.get(url + "users/{}".format(employee_id))
     
     # Check for a valid response
     if response_user.status_code != 200:
@@ -65,5 +65,5 @@ def main():
         print(f"\t {task.get('title')}")
 
 
-if __name__ == "__name__ == "__main__":
+if __name__ == "__main__":
     main()
