@@ -10,7 +10,8 @@ def fetch_todo_progress_and_export_to_csv(employee_id):
     """Fetch TODO list data and export it to a CSV file."""
     # Endpoint URLs
     user_url = f"https://jsonplaceholder.typicode.com/users/{employee_id}"
-    todos_url = f"https://jsonplaceholder.typicode.com/users/{employee_id}/todos"
+    todos_url = f"https://jsonplaceholder.typicode.com/users/\
+{employee_id}/todos"
 
     # Fetch user information
     user_response = requests.get(user_url)
@@ -27,12 +28,14 @@ def fetch_todo_progress_and_export_to_csv(employee_id):
     # Open the CSV file for writing
     with open(csv_filename, 'w', newline='', encoding='utf-8') as csvfile:
         csv_writer = csv.writer(csvfile)
-        
+
         # Write data to CSV file
         for task in todos_data:
             TASK_COMPLETED_STATUS = str(task['completed'])  # Convert to string
             TASK_TITLE = task['title']
-            csv_writer.writerow([employee_id, USERNAME, TASK_COMPLETED_STATUS, TASK_TITLE])
+            csv_writer.writerow([
+                employee_id, USERNAME, TASK_COMPLETED_STATUS, TASK_TITLE
+            ])
 
     print(f"Data exported to {csv_filename}")
 
